@@ -2,6 +2,7 @@
 #define DIALOG_H
 
 #include <QDialog>
+#include "FileTransferClient.h"
 
 namespace Ui {
 class Dialog;
@@ -17,11 +18,11 @@ public:
 
 private slots:
     void on_connectButton_clicked();
-
     void on_receiveButton_clicked();
 
 private:
     Ui::Dialog *ui;
+    FileTransferClient fileTransferClient;
 };
 
 #endif // DIALOG_H

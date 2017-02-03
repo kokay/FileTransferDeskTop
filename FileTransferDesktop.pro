@@ -8,13 +8,22 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = FileTransfer
+TARGET = FileTransferDesktop
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        dialog.cpp
+        dialog.cpp \
+        FileInfo.cc \
+        FileTransferClient.cc
 
-HEADERS  += dialog.h
+HEADERS  += dialog.h \
+        FileInfo.h \
+        FileTransferClient.h
 
 FORMS    += dialog.ui
+
+CONFIG += c++11
+
+LIBS += -lboost_system \
+        -lboost_filesystem

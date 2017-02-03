@@ -58,7 +58,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit">
+          <widget class="QLineEdit" name="remoteIpAddressLineEdit">
            <property name="minimumSize">
             <size>
              <width>144</width>
@@ -75,7 +75,7 @@
             <string>000.000.000.000</string>
            </property>
            <property name="text">
-            <string>192.168.49.100</string>
+            <string>...</string>
            </property>
            <property name="echoMode">
             <enum>QLineEdit::Normal</enum>
@@ -106,7 +106,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit_2">
+          <widget class="QLineEdit" name="portLineEdit">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -129,7 +129,7 @@
             <string>00000</string>
            </property>
            <property name="text">
-            <string>55555</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -149,14 +149,14 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Download Directory</string>
+          <string>Receiving Directory</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_3">
+        <widget class="QLineEdit" name="receivingDirLineEdit">
          <property name="text">
-          <string>/</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -175,17 +175,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>lineEdit</zorder>
-  <zorder>label</zorder>
-  <zorder>label_2</zorder>
-  <zorder>lineEdit_2</zorder>
-  <zorder>connectButton</zorder>
-  <zorder>lineEdit</zorder>
-  <zorder>label_3</zorder>
-  <zorder>lineEdit_3</zorder>
-  <zorder>listView</zorder>
-  <zorder>receiveButton</zorder>
-  <zorder>horizontalSpacer</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
