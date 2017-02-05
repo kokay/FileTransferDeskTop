@@ -2,6 +2,7 @@
 #define DIALOG_H
 
 #include <QDialog>
+#include <QtGui>
 #include "FileTransferClient.h"
 
 namespace Ui {
@@ -22,6 +23,7 @@ private slots:
 
 private:
     Ui::Dialog *ui;
+    QStandardItemModel *model;
     FileTransferClient fileTransferClient;
 };
 
