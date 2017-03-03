@@ -13,12 +13,12 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        dialog.cpp \
-        FileInfo.cc \
-        FileTransferClient.cc
+        dialog.cpp\
+        FileInfo.cpp\
+        FileTransferClient.cpp
 
-HEADERS  += dialog.h \
-        FileInfo.h \
+HEADERS  += dialog.h\
+        FileInfo.h\
         FileTransferClient.h
 
 FORMS    += dialog.ui

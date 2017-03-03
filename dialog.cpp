@@ -4,39 +4,57 @@
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog),
-    fileTransferClient()
+    fileTransferClient(new FileTransferClient(this))
 {
     ui->setupUi(this);
 
     ui->remoteIpAddressLineEdit->setText(
-                QString::fromStdString(fileTransferClient.DEFAULT_REMOTE_IP_ADDRESS));
+        QString::fromStdString(FileTransferClient::DEFAULT_REMOTE_IP_ADDRESS));
     ui->portLineEdit->setText(
-                QString::fromStdString(std::to_string(fileTransferClient.DEFAULT_PORT)));
+        QString::fromStdString(FileTransferClient::DEFAULT_PORT));
     ui->receivingDirLineEdit->setText(
-                QString::fromStdString(fileTransferClient.DEFAULT_RECEIVING_DIR));
+        QString::fromStdString(FileTransferClient::DEFAULT_RECEIVE_DIR));
+    ui->receiveButton->setEnabled(false);
 }
-
 
 Dialog::~Dialog()
 {
     delete ui;
+    delete fileTransferClient;
 }
 
 void Dialog::on_connectButton_clicked()
 {
     std::string remoteIpAddress = ui->remoteIpAddressLineEdit->text().toStdString();
     int port = std::stoi(ui->portLineEdit->text().toStdString());
-    fileTransferClient.connect(remoteIpAddress, port);
-    fileTransferClient.receiveFileList();
-    model = new QStandardItemModel(fileTransferClient.getFileList().size(), 1, this);
+
+    ui->connectButton->setEnabled(false);
+    fileTransferClient->connect(remoteIpAddress, port);
+}
+
+void Dialog::setStatus(const string& status)
+{
+    ui->statusLabel->setText(QString::fromStdString(status));
+}
+
+void Dialog::setFileList(const vector<FileInfo>& fileList)
+{
+    model = new QStandardItemModel(fileList.size(), 1, this);
     ui->listView->setModel(model);
     ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    for (int row = 0; row < fileTransferClient.getFileList().size(); ++row ) {
+    for (unsigned int row = 0; row < fileList.size(); ++row ) {
         QModelIndex index = model->index(row, 0);
-        model->setData(index, QString::fromStdString(
-                           (fileTransferClient.getFileList()[row].getName())));
+        model->setData(index, QString::fromStdString(fileList[row].getName()));
     }
+}
+
+void Dialog::setProgress(const long long soFar, const long long size)
+{
+    int progress = soFar / (float)size * 100;
+    ui->receivedBytes->setText(
+        QString::fromStdString(to_string(soFar) + " B / " + to_string(size) + " B"));
+    ui->progressBar->valueChanged(progress);
 }
 
 void Dialog::on_receiveButton_clicked()
@@ -45,11 +63,8 @@ void Dialog::on_receiveButton_clicked()
     if (buttonText == "Close") {
         QCoreApplication::exit();
     } else {
-        std::string receivingDir = ui->receivingDirLineEdit->text().toStdString();
-        fileTransferClient.setReceivingDir(receivingDir);
-        fileTransferClient.receiveFiles();
-        fileTransferClient.close();
-        model->clear();
-        ui->receiveButton->setText("Close");
+        ui->receiveButton->setEnabled(false);
+        std::string receiveDir = ui->receivingDirLineEdit->text().toStdString();
+        fileTransferClient->receiveFiles(receiveDir);
     }
 }

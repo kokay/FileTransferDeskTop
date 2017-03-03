@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>520</width>
-    <height>568</height>
+    <width>530</width>
+    <height>557</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,13 +18,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>520</width>
+    <width>530</width>
     <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>520</width>
+    <width>530</width>
     <height>16777215</height>
    </size>
   </property>
@@ -34,15 +34,15 @@
   <property name="windowTitle">
    <string>File Transfer (With Android)</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_7">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <layout class="QHBoxLayout" name="receivingDirectoryBoxLayout">
        <item>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="recivingDirectoryLabel">
          <property name="text">
-          <string>Receiving Directory</string>
+          <string>Receiving Directory :</string>
          </property>
         </widget>
        </item>
@@ -55,29 +55,26 @@
        </item>
       </layout>
      </item>
-     <item row="3" column="0">
-      <widget class="QListView" name="listView"/>
-     </item>
-     <item row="1" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="remoteIpAddressBoxLayout">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="removeIpAddressLabel">
            <property name="minimumSize">
             <size>
-             <width>142</width>
+             <width>150</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>142</width>
+             <width>150</width>
              <height>32</height>
             </size>
            </property>
            <property name="text">
-            <string>Remote IP Address</string>
+            <string>Remote IP Address :</string>
            </property>
           </widget>
          </item>
@@ -109,12 +106,12 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="portBoxLayout">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="portLabel">
            <property name="minimumSize">
             <size>
-             <width>31</width>
+             <width>40</width>
              <height>0</height>
             </size>
            </property>
@@ -125,7 +122,7 @@
             </size>
            </property>
            <property name="text">
-            <string>Port</string>
+            <string>Port :</string>
            </property>
           </widget>
          </item>
@@ -174,89 +171,117 @@
        </item>
       </layout>
      </item>
-     <item row="4" column="0">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Current Processing File</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="frame">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QFrame" name="frame">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QLabel" name="label_5">
-                <property name="text">
-                 <string>IMG_20160817_164355.jpg</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout">
-                <item>
-                 <widget class="QProgressBar" name="progressBar">
-                  <property name="layoutDirection">
-                   <enum>Qt::LeftToRight</enum>
-                  </property>
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                  <property name="textVisible">
-                   <bool>false</bool>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="format">
-                   <string>%p%</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_5">
-                  <item>
-                   <widget class="QLabel" name="label_7">
-                    <property name="text">
-                     <string>Receiving...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_8">
-                    <property name="text">
-                     <string>100 MB / 300 MB</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-             </layout>
+             <widget class="QLabel" name="label_6">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Status :</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="statusLabel">
+              <property name="text">
+               <string>No Connection</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="progressBar">
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="minimum">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>0</number>
+            </property>
+            <property name="textVisible">
+             <bool>true</bool>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="invertedAppearance">
+             <bool>false</bool>
+            </property>
+            <property name="format">
+             <string>%p%</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="receivedBytes">
+              <property name="text">
+               <string>0 B / 0 B</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
          </layout>
+        </item>
+       </layout>
+       <zorder></zorder>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Receiving File List</string>
+         </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QListView" name="listView"/>
        </item>
       </layout>
      </item>
-     <item row="5" column="0">
+     <item>
       <widget class="QPushButton" name="receiveButton">
        <property name="text">
         <string>Receive File(s)</string>
@@ -266,31 +291,15 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Receiving File List</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>
   <zorder></zorder>
-  <zorder></zorder>
-  <zorder>progressBar</zorder>
-  <zorder>label_5</zorder>
-  <zorder>label_6</zorder>
-  <zorder>label_7</zorder>
-  <zorder>label_8</zorder>
-  <zorder>label_6</zorder>
-  <zorder>label_6</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>receivingDirLineEdit</tabstop>
   <tabstop>remoteIpAddressLineEdit</tabstop>
-  <tabstop>portLineEdit</tabstop>
   <tabstop>connectButton</tabstop>
   <tabstop>listView</tabstop>
   <tabstop>receiveButton</tabstop>

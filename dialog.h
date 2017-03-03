@@ -17,6 +17,11 @@ public:
     explicit Dialog(QWidget *parent = 0);
     ~Dialog();
 
+    void setStatus(const string& status);
+    void setFileList(const vector<FileInfo>& fileList);
+    void setProgress(const long long soFar, const long long size);
+
+
 private slots:
     void on_connectButton_clicked();
     void on_receiveButton_clicked();
@@ -24,7 +29,7 @@ private slots:
 private:
     Ui::Dialog *ui;
     QStandardItemModel *model;
-    FileTransferClient fileTransferClient;
+    FileTransferClient *fileTransferClient;
 };
 
 #endif // DIALOG_H

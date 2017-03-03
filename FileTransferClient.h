@@ -1,43 +1,53 @@
 #ifndef FILETRANSFERCLIENT_H_
 #define FILETRANSFERCLIENT_H_
 
-#include <boost/asio.hpp>
+#include <QObject>
 #include <vector>
+#include <thread>
+#include <boost/asio.hpp>
 #include "FileInfo.h"
 
+using namespace std;
+using namespace boost;
+
+class Dialog;
 class FileTransferClient {
 public:
-    const std::string DEFAULT_REMOTE_IP_ADDRESS = "192.168.49.1";
-    const int DEFAULT_PORT = 55555;
-    const std::string DEFAULT_RECEIVING_DIR = "./ReceivedFiles/";
+    static const string DEFAULT_REMOTE_IP_ADDRESS;
+    static const string DEFAULT_PORT;
+    static const string DEFAULT_RECEIVE_DIR;
 
-    FileTransferClient()
-        : receivingDir(DEFAULT_RECEIVING_DIR)
-		, socket(io_service)
-	{}
+    FileTransferClient(Dialog* dialog);
+	const vector<FileInfo>& getFileList() const { return fileList; };
 
-    void connect(const std::string& remoteIpAddress, const int port);
+	void connect(const std::string& remoteIpAddress, const int port);
 	void close();
+    void receiveFiles(const string& receiveDir);
 	void receiveFileList();
-	void receiveFiles();
-	void sendFileList();
-	void sendFiles();
-	void setReceivingDir(const std::string& path);
-	std::vector<FileInfo> getFileList();
 
 private:
-	const std::string REQUEST = "Request File List";
+	void sendFileListRequest();
+	void receiveFilesHelper();
+	void receiveFile(FileInfo* fileInfo);
+	long long parseLongLong(const string& stringNum);
 
-	std::string receivingDir;
-	boost::asio::io_service io_service;
-	boost::asio::ip::tcp::socket socket;
-	std::vector<FileInfo> fileList;
+	asio::io_service ioService;
+	asio::ip::tcp::socket socket;
+    unique_ptr<asio::io_service::work> work;
+    unique_ptr<std::thread> workThread;
+    unique_ptr<std::thread> receiveFileThread;
 
-	void receiveFile(FileInfo& fileInfo);
-	std::string readFileListString();
-	void sendFile(FileInfo& fileInfo);
-	std::string readLine();
+	asio::streambuf responseBuf;
+	vector<FileInfo> fileList;
+
+	char buf[1024 * 3];
+	system::error_code error;
+	
+    string receiveDir;
+    Dialog* dialog;
+
+    const string REQUEST = "Request File List\r\n";
 };
 
 
-#endif // FILETRANSFERCLIENT_H_
+#endif //FILETRANSFERCLIENT_H_
