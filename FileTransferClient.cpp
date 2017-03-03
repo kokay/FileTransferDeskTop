@@ -142,6 +142,7 @@ void FileTransferClient::receiveFile(FileInfo* fileInfo) {
 
 		ofs.write(buf, readSize);
 		fileInfo->addSoFar(readSize);
+        changeProgress(fileInfo->getSoFar(), fileInfo->getSize());
 	}
 	ofs.close();
 }

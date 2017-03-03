@@ -11,7 +11,10 @@ using namespace std;
 using namespace boost;
 
 class Dialog;
-class FileTransferClient {
+class FileTransferClient : public QObject {
+
+    Q_OBJECT
+
 public:
     static const string DEFAULT_REMOTE_IP_ADDRESS;
     static const string DEFAULT_PORT;
@@ -24,6 +27,9 @@ public:
 	void close();
     void receiveFiles(const string& receiveDir);
 	void receiveFileList();
+
+signals:
+    void changeProgress(const long long, const long long);
 
 private:
 	void sendFileListRequest();

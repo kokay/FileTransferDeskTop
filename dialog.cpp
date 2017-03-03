@@ -14,7 +14,6 @@ Dialog::Dialog(QWidget *parent) :
         QString::fromStdString(FileTransferClient::DEFAULT_PORT));
     ui->receivingDirLineEdit->setText(
         QString::fromStdString(FileTransferClient::DEFAULT_RECEIVE_DIR));
-    ui->receiveButton->setEnabled(false);
 }
 
 Dialog::~Dialog()
@@ -54,7 +53,7 @@ void Dialog::setProgress(const long long soFar, const long long size)
     int progress = soFar / (float)size * 100;
     ui->receivedBytes->setText(
         QString::fromStdString(to_string(soFar) + " B / " + to_string(size) + " B"));
-    ui->progressBar->valueChanged(progress);
+    ui->progressBar->setValue(progress);
 }
 
 void Dialog::on_receiveButton_clicked()
@@ -64,6 +63,9 @@ void Dialog::on_receiveButton_clicked()
         QCoreApplication::exit();
     } else {
         ui->receiveButton->setEnabled(false);
+        connect(fileTransferClient, SIGNAL(changeProgress(const long long, const long long)),
+                this, SLOT(setProgress(const long long, const long long)));
+
         std::string receiveDir = ui->receivingDirLineEdit->text().toStdString();
         fileTransferClient->receiveFiles(receiveDir);
     }
