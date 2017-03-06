@@ -10,6 +10,16 @@ const string FileTransferClient::DEFAULT_REMOTE_IP_ADDRESS = "192.168.49.1";
 const string FileTransferClient::DEFAULT_PORT = "55555";
 const string FileTransferClient::DEFAULT_RECEIVE_DIR = "./files";
 
+const string FileTransferClient::NO_CONNECTION = "No connection";
+const string FileTransferClient::CONNECTING = "Connecting..";
+const string FileTransferClient::SENDING_FILE_LIST_REQUEST = "Sending the file list request...";
+const string FileTransferClient::WAITING_FOR_FILE_LIST = "Waiting for the file list...";
+const string FileTransferClient::RECEIVED_FILE_LIST = "Received the file list";
+const string FileTransferClient::RECEIVING_FILES = "Receiving the file(s)...";
+const string FileTransferClient::DONE = "Done";
+const string FileTransferClient::CANCELED = "Canceled";
+const string FileTransferClient::CONNECTION_FAILED = "Connection failed";
+
 FileTransferClient::FileTransferClient(Dialog* dialog)
     : socket(ioService)
     , dialog(dialog)
@@ -27,53 +37,46 @@ void FileTransferClient::connect(const string& remoteIpAddress, const int port) 
         try {
             ioService.run();
         } catch(const std::exception&) {
-            dialog->setStatus("ERROR - Connection failed.");
+            emit changeStatus(CONNECTION_FAILED);
         }
-
     }));
 
-    dialog->setStatus("Connecting...");
-
+    emit changeStatus(CONNECTING);
     asio::ip::tcp::endpoint ep(asio::ip::address::from_string(remoteIpAddress), port);
-    socket.open(ep.protocol());
-	socket.async_connect(ep, [this](const system::error_code& error) {
-		if (error) {
-            dialog->setStatus("ERROR - Connection failed.");
-			cout << "Error" << endl;
-			return;
+    socket.async_connect(ep, [this](const system::error_code& error) {
+        if (error) {
+            emit changeStatus(CONNECTION_FAILED);
+            close();
+            return;
 		}
-
-        dialog->setStatus("Connected");
         sendFileListRequest();
 	});
 }
 
 void FileTransferClient::sendFileListRequest() {
-    dialog->setStatus("Sending file list request..");
+    emit changeStatus(SENDING_FILE_LIST_REQUEST);
     asio::async_write(socket, asio::buffer(REQUEST),
         [this](const system::error_code& error, const size_t&) {
 		if (error) {
-            dialog->setStatus("ERROR - Connection failed.");
-            cout << "Error: Could not send File Request." << endl;
-			return;
+            emit changeStatus(CONNECTION_FAILED);
+            close();
+            return;
 		}
-		
-        dialog->setStatus("Sent the file list request");
         receiveFileList();
 	});
 }
 
 void FileTransferClient::receiveFileList() {
-    dialog->setStatus("Receiving the file list...");
+    emit changeStatus(WAITING_FOR_FILE_LIST);
     asio::async_read_until(socket, responseBuf, "\r\n\r\n",
         [this](const system::error_code& error, const size_t&) {
 		if (error) {
-            dialog->setStatus("ERROR - Connection failed.");
-            cout << "Error: Could not receive File List." << endl;
-			return;
+            emit changeStatus(CONNECTION_FAILED);
+            close();
+            return;
 		}
 
-		istream is(&responseBuf);
+        istream is(&responseBuf);
         string line, fileName, fileSizeString, fileType;
 		while (getline(is, line, '\r')) {
 			is.get();
@@ -84,14 +87,16 @@ void FileTransferClient::receiveFileList() {
 
             long long fileSize = parseLongLong(fileSizeString);
 			if (fileSize == -1) {
-				cout << "Error: Could not parse file size.";
-				return;
+                emit changeStatus(CONNECTION_FAILED);
+                cout << "Error: Could not parse file size.";
+                close();
+                return;
 			}
 			
 			fileList.push_back({ fileName, fileSize });
 		}
-        dialog->setStatus("Received the file list");
         dialog->setFileList(fileList);
+        emit changeStatus(RECEIVED_FILE_LIST);
     });
 }
 
@@ -115,34 +120,35 @@ void FileTransferClient::receiveFiles(const string& receiveDir) {
 }
 
 void FileTransferClient::receiveFilesHelper() {
-
+    emit changeStatus(RECEIVING_FILES);
     for (unsigned int i = 0; i < fileList.size(); ++i) {
 		if (!fileList[i].isChecked()) continue;
 
         asio::write(socket, asio::buffer(std::to_string(i) + "\r\n"));
         receiveFile(&fileList[i]);
 	}
-    dialog->setStatus("Done");
+    emit changeStatus(DONE);
 }
 
 void FileTransferClient::receiveFile(FileInfo* fileInfo) {
     ofstream ofs(receiveDir + "/" + fileInfo->getName(), ofstream::binary);
 	if (!ofs.is_open()) {
 		cout << "Error: Could not open " + receiveDir + fileInfo->getName() << endl;
+        return;
 	}
 
-
-    dialog->setStatus("Receiving " + fileInfo->getName() + "...");
+    dialog->setReceiveFileName(fileInfo->getName());
     while (fileInfo->getSoFar() < fileInfo->getSize()) {
-		long long readSize = socket.read_some(asio::buffer(buf), error);
+        long long readSize = socket.read_some(asio::buffer(buf), error);
 		if (error) {
-			cout << "Error: Failed to read " + fileInfo->getName() << endl;
-			return;
+            emit changeStatus(CONNECTION_FAILED);
+            close();
+            return;
 		}
 
 		ofs.write(buf, readSize);
 		fileInfo->addSoFar(readSize);
-        changeProgress(fileInfo->getSoFar(), fileInfo->getSize());
+        emit changeProgress(fileInfo->getSoFar(), fileInfo->getSize());
 	}
 	ofs.close();
 }

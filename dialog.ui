@@ -34,9 +34,9 @@
   <property name="windowTitle">
    <string>File Transfer (With Android)</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <layout class="QHBoxLayout" name="receivingDirectoryBoxLayout">
        <item>
@@ -158,6 +158,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="connectButton">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="text">
           <string>Connect</string>
          </property>
@@ -243,7 +246,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QLabel" name="label_7">
+             <widget class="QLabel" name="fileNameLabel">
               <property name="text">
                <string/>
               </property>
@@ -268,33 +271,58 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Receiving File List</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListView" name="listView"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QLabel" name="label_4">
+        <widget class="QPushButton" name="receiveButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
-          <string>Receiving File List</string>
+          <string>Receive File(s)</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QListView" name="listView"/>
+        <widget class="QPushButton" name="cancelButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="closeButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Close</string>
+         </property>
+        </widget>
        </item>
       </layout>
-     </item>
-     <item>
-      <widget class="QPushButton" name="receiveButton">
-       <property name="text">
-        <string>Receive File(s)</string>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>
   </layout>
   <zorder></zorder>
+  <zorder>cancelButton</zorder>
+  <zorder>closeButton</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

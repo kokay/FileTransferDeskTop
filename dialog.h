@@ -17,13 +17,18 @@ public:
     explicit Dialog(QWidget *parent = 0);
     ~Dialog();
 
-    void setStatus(const string& status);
     void setFileList(const vector<FileInfo>& fileList);
+    void setReceiveFileName(const string& fileName);
 
 private slots:
     void on_connectButton_clicked();
     void on_receiveButton_clicked();
     void setProgress(const long long soFar, const long long size);
+    void setStatus(const string& status);
+
+    void on_cancelButton_clicked();
+
+    void on_closeButton_clicked();
 
 private:
     Ui::Dialog *ui;
