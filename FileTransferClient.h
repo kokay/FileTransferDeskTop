@@ -4,7 +4,6 @@
 #include <QObject>
 #include <vector>
 #include <thread>
-#include <atomic>
 #include <boost/asio.hpp>
 #include "FileInfo.h"
 
@@ -38,7 +37,6 @@ public:
 	void close();
     void receiveFiles(const string& receiveDir);
 	void receiveFileList();
-    void cancel() { canceled.store(true); };
 
 signals:
     void changeProgress(const long long, const long long);
@@ -65,7 +63,7 @@ private:
     string receiveDir;
     Dialog* dialog;
 
-    atomic<bool> canceled;
+    bool canceled = false;
 
     const string REQUEST = "Request File List\r\n";
 };

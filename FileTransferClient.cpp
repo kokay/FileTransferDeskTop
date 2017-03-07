@@ -23,20 +23,22 @@ const string FileTransferClient::CONNECTION_FAILED = "Connection failed";
 FileTransferClient::FileTransferClient(Dialog* dialog)
     : socket(ioService)
     , dialog(dialog)
-{
-    work.reset(new asio::io_service::work(ioService));
-}
+{}
 
 void FileTransferClient::close() {
-    socket.shutdown(asio::ip::tcp::socket::shutdown_both);
-	socket.close();
+    socket.shutdown(asio::ip::tcp::socket::shutdown_both, error);
+    if (error) cout << __FUNCTION__ << " : " << error.message() << endl;
+    ioService.stop();
+    socket.close();
 }
 
 void FileTransferClient::connect(const string& remoteIpAddress, const int port) {
+    work.reset(new asio::io_service::work(ioService));
     workThread.reset(new std::thread([this] {
         try {
             ioService.run();
-        } catch(const std::exception&) {
+        } catch(const std::exception& error) {
+            cout << __FUNCTION__ << " : " << error.what() << endl;
             emit changeStatus(CONNECTION_FAILED);
         }
     }));
@@ -45,7 +47,9 @@ void FileTransferClient::connect(const string& remoteIpAddress, const int port) 
     asio::ip::tcp::endpoint ep(asio::ip::address::from_string(remoteIpAddress), port);
     socket.async_connect(ep, [this](const system::error_code& error) {
         if (error) {
-            emit changeStatus(CONNECTION_FAILED);
+            cout << __FUNCTION__ << " : " << error.message() << endl;
+            if (error.value() == 125) emit changeStatus(CANCELED);
+            else emit changeStatus(CONNECTION_FAILED);
             close();
             return;
 		}
@@ -58,8 +62,9 @@ void FileTransferClient::sendFileListRequest() {
     asio::async_write(socket, asio::buffer(REQUEST),
         [this](const system::error_code& error, const size_t&) {
 		if (error) {
-            emit changeStatus(CONNECTION_FAILED);
-            close();
+            cout << __FUNCTION__ << " : " << error.message() << endl;
+            if (error.value() == 125) emit changeStatus(CANCELED);
+            else emit changeStatus(CONNECTION_FAILED);
             return;
 		}
         receiveFileList();
@@ -71,8 +76,9 @@ void FileTransferClient::receiveFileList() {
     asio::async_read_until(socket, responseBuf, "\r\n\r\n",
         [this](const system::error_code& error, const size_t&) {
 		if (error) {
-            emit changeStatus(CONNECTION_FAILED);
-            close();
+            cout << __FUNCTION__ << " : " << error.message() << endl;
+            if (error.value() == 125) emit changeStatus(CANCELED);
+            else emit changeStatus(CONNECTION_FAILED);
             return;
 		}
 
@@ -126,12 +132,14 @@ void FileTransferClient::receiveFilesHelper() {
 
         asio::write(socket, asio::buffer(std::to_string(i) + "\r\n"));
         receiveFile(&fileList[i]);
+        if (canceled) return;
 	}
     emit changeStatus(DONE);
 }
 
 void FileTransferClient::receiveFile(FileInfo* fileInfo) {
-    ofstream ofs(receiveDir + "/" + fileInfo->getName(), ofstream::binary);
+    string filePath = receiveDir + "/" + fileInfo->getName();
+    ofstream ofs(filePath, ofstream::binary);
 	if (!ofs.is_open()) {
 		cout << "Error: Could not open " + receiveDir + fileInfo->getName() << endl;
         return;
@@ -140,9 +148,12 @@ void FileTransferClient::receiveFile(FileInfo* fileInfo) {
     dialog->setReceiveFileName(fileInfo->getName());
     while (fileInfo->getSoFar() < fileInfo->getSize()) {
         long long readSize = socket.read_some(asio::buffer(buf), error);
-		if (error) {
+        if (error) {
+            cout << __FUNCTION__ << " : " << error.message() << endl;
             emit changeStatus(CONNECTION_FAILED);
-            close();
+            canceled = true;
+            if (filesystem::exists(filePath))
+                filesystem::remove(filePath);
             return;
 		}
 

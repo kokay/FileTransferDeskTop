@@ -61,9 +61,15 @@ void Dialog::setStatus(const string& status)
     } else if (status == FileTransferClient::DONE) {
         ui->cancelButton->setEnabled(false);
         ui->closeButton->setEnabled(true);
-    } else if (status == FileTransferClient::CONNECTION_FAILED) {
+    } else if (status == FileTransferClient::CANCELED) {
         ui->progressBar->setMaximum(100);
         ui->connectButton->setEnabled(false);
+        ui->receiveButton->setEnabled(false);
+        ui->cancelButton->setEnabled(false);
+        ui->closeButton->setEnabled(true);
+    } else if (status == FileTransferClient::CONNECTION_FAILED) {
+        ui->progressBar->setMaximum(100);
+        ui->connectButton->setEnabled(true);
         ui->receiveButton->setEnabled(false);
         ui->cancelButton->setEnabled(false);
         ui->closeButton->setEnabled(true);
@@ -105,7 +111,7 @@ void Dialog::on_receiveButton_clicked()
 
 void Dialog::on_cancelButton_clicked()
 {
-    ui->closeButton->setEnabled(!ui->closeButton->isEnabled());
+    fileTransferClient->close();
 }
 
 void Dialog::on_closeButton_clicked()
